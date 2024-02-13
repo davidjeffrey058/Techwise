@@ -165,7 +165,6 @@ class _SignUpState extends State<SignUp> {
                                   if (result == null) {
                                     showScaffoldMessenger();
                                   }
-                                  setState(() => showLoading = false);
                                 },
                           child: showLoading
                               ? Row(

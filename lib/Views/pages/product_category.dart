@@ -31,7 +31,6 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
       i++;
     }
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
           contents['category'],

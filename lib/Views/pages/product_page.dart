@@ -33,7 +33,6 @@ class _ProductPageState extends State<ProductPage> {
     urls = data['product_image'];
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
           'Details',
@@ -70,10 +69,10 @@ class _ProductPageState extends State<ProductPage> {
                           items: urls
                               .map((e) => InkWell(
                                   onTap: () => Navigator.pushNamed(
-                                          context, '/image_viewer', arguments: {
-                                        'picture': urls,
-                                        'index': urls.indexOf(e)
-                                      }),
+                                          context, '/image_viewer',
+                                          arguments: {
+                                            'picture': urls,
+                                          }),
                                   child: CarouselLayout(value: e)))
                               .toList()),
                       Container(

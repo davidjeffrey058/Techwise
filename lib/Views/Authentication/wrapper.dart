@@ -5,7 +5,8 @@ import 'package:techwise_pub/Models/user_properties.dart';
 import 'package:techwise_pub/Views/pages/home.dart';
 
 class Wrapper extends StatelessWidget {
-  const Wrapper({super.key});
+  final String title;
+  const Wrapper({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,9 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
-      return Home();
+      return Home(
+        title: title,
+      );
     }
   }
 }

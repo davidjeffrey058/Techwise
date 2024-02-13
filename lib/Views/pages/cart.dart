@@ -174,7 +174,6 @@ class _CartState extends State<Cart> {
     }
 
     return Scaffold(
-        backgroundColor: Colors.grey[100],
         appBar: AppBar(
           title: const Text(
             'Cart',

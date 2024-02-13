@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:techwise_pub/color_palette.dart';
 
 class TitleSection extends StatelessWidget {
-  const TitleSection({super.key});
+  final String title;
+  const TitleSection({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class TitleSection extends StatelessWidget {
                 InkWell(
                   onTap: () => Navigator.pushNamed(context, '/example_page'),
                   child: Text(
-                    'TECHWISE',
+                    title.toUpperCase(),
                     style: TextStyle(
                         fontSize: 25,
                         fontFamily: 'Bauhaus',
@@ -53,18 +54,23 @@ class TitleSection extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
-            child: TextFormField(
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(9),
-                    borderSide: BorderSide(color: Colors.white)),
-                fillColor: Colors.white,
-                filled: true,
-                hintText: 'Search here...',
-                suffixIcon: Icon(Icons.search),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/search_page'),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 15),
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              width: double.infinity,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Search here...'),
+                  Icon(Icons.search_rounded),
+                ],
               ),
             ),
           )

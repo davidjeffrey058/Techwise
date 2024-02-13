@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
-import 'home_tab.dart';
-import 'category.dart';
-import 'wishlist.dart';
-import 'profile.dart';
+import 'package:techwise_pub/Views/pages/NavigationBarScreens/new_profile_page.dart';
+import 'NavigationBarScreens/home_tab.dart';
+import 'NavigationBarScreens/category.dart';
+import 'NavigationBarScreens/wishlist.dart';
+import 'NavigationBarScreens/profile.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final String title;
+  const Home({Key? key, required this.title}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  // dynamic statusColor = Color(0xff0074A6);
   var navIndex = 0;
-  final tabs = [HomeTab(), Category(), WishList(), Profile()];
 
   @override
   Widget build(BuildContext context) {
     // final user = Provider.of<UserProperties?>(context);
-
+    final tabs = [
+      HomeTab(title: widget.title),
+      Category(),
+      WishList(),
+      NewProfilePage(),
+    ];
     // DataServices().showImagePath(user?.uid);
 
     return Scaffold(
@@ -32,24 +37,6 @@ class _HomeState extends State<Home> {
         onTap: (index) {
           setState(() {
             navIndex = index;
-            // switch(index){
-            //   case 0:{
-            //     statusColor = colorPalette.mainBlue;
-            //     break;
-            //   }
-            //   case 1:{
-            //     statusColor = Colors.green;
-            //     break;
-            //   }
-            //   case 2:{
-            //     statusColor = Colors.red;
-            //     break;
-            //   }
-            //   case 3:{
-            //     statusColor = Colors.purple;
-            //     break;
-            //   }
-            // }
           });
         },
         backgroundColor: Colors.white,

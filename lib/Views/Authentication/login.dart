@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:techwise_pub/services/authenticaiton_services.dart';
 
-import '../../others/mode_switch.dart';
+import '../../States/mode_switch.dart';
 
 class Login extends StatefulWidget {
   final void Function() toggle;
@@ -199,7 +199,15 @@ class _LoginState extends State<Login> {
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 32),
                     child: ElevatedButton(
-                        onPressed: () {},
+                        // Google Sign in Method
+                        onPressed: () async {
+                          customProgressIndicator();
+                          final result = await services.signInWithGoogle();
+                          Navigator.pop(context);
+                          if (result == null) {
+                            showScaffoldMessenger(services.errorMessage);
+                          }
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
@@ -359,5 +367,22 @@ class _LoginState extends State<Login> {
         width: 0,
       );
     }
+  }
+
+  customProgressIndicator() {
+    showDialog(
+      context: context,
+      builder: ((context) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          content: Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          ),
+        );
+      }),
+    );
   }
 }

@@ -1,22 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:techwise_pub/Models/user_properties.dart';
 
 class AuthenticationServices {
   final auth = FirebaseAuth.instance;
-  String errorMessage = '';
-  String? userId;
+  String errorMessage = 'An error occured';
 
   UserProperties? customUserFromFirebase(User? user) {
     return user != null
         ? UserProperties(
-            uid: user.uid, email: user.email, fullName: user.displayName)
+            uid: user.uid,
+            email: user.email,
+            fullName: user.displayName,
+            photoUrl: user.photoURL,
+            emailVerified: user.emailVerified)
         : null;
   }
 
   Stream<UserProperties?> get authenticationState {
-    auth.authStateChanges().listen((User? user) {
-      userId = user?.uid;
-    });
     return auth.authStateChanges().map(customUserFromFirebase);
   }
 
@@ -29,7 +31,7 @@ class AuthenticationServices {
     try {
       final UserCredential credential = await auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      credential.user?.updateDisplayName(fullName);
+      await credential.user?.updateDisplayName(fullName);
       return customUserFromFirebase(credential.user);
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
@@ -61,7 +63,29 @@ class AuthenticationServices {
     return null;
   }
 
-  Future<void> logout() async {
-    await auth.signOut();
+  // Login user with google
+  Future signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
+
+      final userCredential = await auth.signInWithCredential(credential);
+
+      return customUserFromFirebase(userCredential.user);
+    } catch (error) {
+      errorMessage = "Couldn't sign in";
+      if (kDebugMode) {
+        print(error);
+      }
+    }
+  }
+
+  Future<void> logout(bool emailVerified) async {
+    !emailVerified ? await auth.signOut() : await GoogleSignIn().disconnect();
   }
 }

@@ -7,16 +7,15 @@ class CheckOut extends StatefulWidget {
   @override
   State<CheckOut> createState() => _CheckOutState();
 }
+
 dynamic data = [];
 
 class _CheckOutState extends State<CheckOut> {
   @override
   Widget build(BuildContext context) {
-
     data = ModalRoute.of(context)?.settings.arguments;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Checkout'),
       ),
@@ -25,9 +24,7 @@ class _CheckOutState extends State<CheckOut> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Your total'),
-            Text(
-              NumberFormat.currency(symbol: '₵').format(data['total'])
-            ),
+            Text(NumberFormat.currency(symbol: '₵').format(data['total'])),
           ],
         ),
       ),
