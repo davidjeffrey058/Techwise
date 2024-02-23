@@ -85,7 +85,7 @@ class AuthenticationServices {
     }
   }
 
-  Future<void> logout(bool emailVerified) async {
-    !emailVerified ? await auth.signOut() : await GoogleSignIn().disconnect();
+  Future<void> logout() async {
+    await GoogleSignIn().isSignedIn() ? GoogleSignIn().signOut() : auth.signOut();
   }
 }

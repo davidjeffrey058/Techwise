@@ -24,7 +24,7 @@ List<Map> options = [
   },
   {'iconData': Icons.email_outlined, 'title': 'Inbox', 'value': Options.inbox},
 ];
-AuthenticationServices services = AuthenticationServices();
+
 
 class _NewProfilePageState extends State<NewProfilePage> {
   @override
@@ -47,7 +47,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
           child: Column(
             children: [
               ListView(
@@ -57,7 +57,8 @@ class _NewProfilePageState extends State<NewProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 52,
-                        backgroundColor: Colors.grey[300],
+                        backgroundColor:user.photoUrl == null ? Colors.grey[300] : Theme.of(context).colorScheme.secondary,
+                        backgroundImage: user.photoUrl == null ? null : NetworkImage(user.photoUrl!),
                       ),
                       SizedBox(
                         width: 17,
@@ -124,7 +125,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
               Spacer(),
               ElevatedButton.icon(
                 onPressed: () async {
-                  await services.logout(user.emailVerified!);
+                  await services.logout();
                 },
                 icon: const Icon(Icons.logout),
                 label: Text(

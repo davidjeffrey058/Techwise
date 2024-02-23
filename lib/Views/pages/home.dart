@@ -3,7 +3,6 @@ import 'package:techwise_pub/Views/pages/NavigationBarScreens/new_profile_page.d
 import 'NavigationBarScreens/home_tab.dart';
 import 'NavigationBarScreens/category.dart';
 import 'NavigationBarScreens/wishlist.dart';
-import 'NavigationBarScreens/profile.dart';
 
 class Home extends StatefulWidget {
   final String title;
