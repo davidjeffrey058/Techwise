@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techwise_pub/Models/user_properties.dart';
+import 'package:techwise_pub/Views/Components/custom_icon.dart';
 import 'package:techwise_pub/services/authenticaiton_services.dart';
 
 class NewProfilePage extends StatefulWidget {
@@ -11,18 +12,18 @@ class NewProfilePage extends StatefulWidget {
 }
 
 List<Map> options = [
-  {'iconData': Icons.menu, 'title': 'My Orders', 'value': Options.myOrder},
+  {'icon': 'order.png', 'title': 'My Orders', 'value': Options.myOrder},
   {
-    'iconData': Icons.card_giftcard,
+    'icon': 'voucher.png',
     'title': 'Vouchers',
     'value': Options.vouchers
   },
   {
-    'iconData': Icons.replay_outlined,
+    'icon': 'most-recent.png',
     'title': 'Recently Viewed',
     'value': Options.recentlyViewed
   },
-  {'iconData': Icons.email_outlined, 'title': 'Inbox', 'value': Options.inbox},
+  {'icon': 'inbox.png', 'title': 'Inbox', 'value': Options.inbox},
 ];
 
 
@@ -38,7 +39,9 @@ class _NewProfilePageState extends State<NewProfilePage> {
         actions: [
           IconButton(
               tooltip: 'Dark mode',
-              onPressed: () {},
+              onPressed: (){
+                // Provider.of<ModeSwitch>(context, listen: false).toggle()
+              },
               icon: Icon(
                 Icons.sunny,
                 color: Colors.black,
@@ -100,7 +103,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
                               onTap: () {},
                               contentPadding:
                                   EdgeInsets.symmetric(horizontal: 20),
-                              leading: Icon(options[index]['iconData']),
+                              leading: CustomIcon(iconName: options[index]['icon']),
                               title: Text(options[index]['title']),
                               trailing:
                                   Icon(Icons.keyboard_arrow_right_rounded),

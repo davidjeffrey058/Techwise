@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:techwise_pub/Views/Components/home_components/special_product_section.dart';
 import 'package:techwise_pub/Views/Components/home_components/title_section.dart';
+import 'package:techwise_pub/Views/Components/product_loading.dart';
 import 'package:techwise_pub/services/data_services.dart';
 import 'package:techwise_pub/Models/all_products.dart';
 import 'package:techwise_pub/Models/product_info.dart';
@@ -66,10 +66,16 @@ class _HomeTabState extends State<HomeTab> {
                   future: dataInstance,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: SpinKitDualRing(
-                          size: 30,
-                          color: Theme.of(context).primaryColor,
+                      return SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          key: PageStorageKey('popular'),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 5,
+                          itemBuilder: (context, index){
+                            return  ProductLoading();
+                          },
                         ),
                       );
                     } else if (snapshot.connectionState ==
@@ -94,10 +100,16 @@ class _HomeTabState extends State<HomeTab> {
                   future: dataInstance,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: SpinKitDualRing(
-                          size: 30,
-                          color: Theme.of(context).primaryColor,
+                      return SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          key: PageStorageKey('featured'),
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 5,
+                          itemBuilder: (context, index){
+                            return  ProductLoading();
+                          },
                         ),
                       );
                     } else if (snapshot.connectionState ==

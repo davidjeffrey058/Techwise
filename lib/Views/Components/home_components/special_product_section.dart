@@ -80,10 +80,13 @@ class SpecialProductSection extends StatelessWidget {
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  SizedBox(width: 10,),
                   roundNavigationButton(true),
+                  Spacer(),
                   roundNavigationButton(false),
+                  SizedBox(width: 10,)
                 ],
               ),
             ),
@@ -97,13 +100,13 @@ class SpecialProductSection extends StatelessWidget {
     return InkWell(
       onTap: isLeft ? previous : next,
       child: Container(
-        height: 60,
-        width: 60,
+        height: 55,
+        width: 55,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white,
-              width: 3,
+              width: 2,
             ),
             boxShadow: [
               BoxShadow(
