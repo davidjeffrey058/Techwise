@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:techwise_pub/Views/pages/NavigationBarScreens/new_profile_page.dart';
+import 'package:techwise_pub/Views/pages/NavigationBarScreens/profile_page.dart';
 import 'NavigationBarScreens/home_tab.dart';
 import 'NavigationBarScreens/category.dart';
 import 'NavigationBarScreens/wishlist.dart';

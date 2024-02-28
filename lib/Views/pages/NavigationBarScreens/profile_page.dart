@@ -12,20 +12,23 @@ class NewProfilePage extends StatefulWidget {
 }
 
 List<Map> options = [
-  {'icon': 'order.png', 'title': 'My Orders', 'value': Options.myOrder},
+  {
+    'icon': 'order.png',
+    'title': 'My Orders',
+    'target_route': '/my_orders',
+  },
   {
     'icon': 'voucher.png',
     'title': 'Vouchers',
-    'value': Options.vouchers
+    'target_route': '/vouchers',
   },
   {
     'icon': 'most-recent.png',
     'title': 'Recently Viewed',
-    'value': Options.recentlyViewed
+    'target_route': '/recently_viewed',
   },
-  {'icon': 'inbox.png', 'title': 'Inbox', 'value': Options.inbox},
+  {'icon': 'inbox.png', 'title': 'Inbox',},
 ];
-
 
 class _NewProfilePageState extends State<NewProfilePage> {
   @override
@@ -39,7 +42,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
         actions: [
           IconButton(
               tooltip: 'Dark mode',
-              onPressed: (){
+              onPressed: () {
                 // Provider.of<ModeSwitch>(context, listen: false).toggle()
               },
               icon: Icon(
@@ -60,8 +63,12 @@ class _NewProfilePageState extends State<NewProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 52,
-                        backgroundColor:user.photoUrl == null ? Colors.grey[300] : Theme.of(context).colorScheme.secondary,
-                        backgroundImage: user.photoUrl == null ? null : NetworkImage(user.photoUrl!),
+                        backgroundColor: user.photoUrl == null
+                            ? Colors.grey[300]
+                            : Theme.of(context).colorScheme.secondary,
+                        backgroundImage: user.photoUrl == null
+                            ? null
+                            : NetworkImage(user.photoUrl!),
                       ),
                       SizedBox(
                         width: 17,
@@ -100,10 +107,16 @@ class _NewProfilePageState extends State<NewProfilePage> {
                         return Column(
                           children: [
                             ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                if (options[index]['target_route'] != null) {
+                                  Navigator.pushNamed(
+                                      context, options[index]['target_route']);
+                                }
+                              },
                               contentPadding:
                                   EdgeInsets.symmetric(horizontal: 20),
-                              leading: CustomIcon(iconName: options[index]['icon']),
+                              leading:
+                                  CustomIcon(iconName: options[index]['icon']),
                               title: Text(options[index]['title']),
                               trailing:
                                   Icon(Icons.keyboard_arrow_right_rounded),
@@ -144,4 +157,3 @@ class _NewProfilePageState extends State<NewProfilePage> {
   }
 }
 
-enum Options { myOrder, vouchers, recentlyViewed, inbox }

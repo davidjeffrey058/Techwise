@@ -36,8 +36,21 @@ ThemeData lightTheme = ThemeData(
           OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       focusedErrorBorder: OutlineInputBorder(
           borderSide: BorderSide(color: const Color(0xff0074a6)))),
+  tabBarTheme: TabBarTheme(
+    unselectedLabelColor: Colors.white,
+    unselectedLabelStyle: TextStyle(
+      fontWeight: FontWeight.w100
+    ),
+    labelColor: Colors.white,
+    labelStyle: TextStyle(
+      fontWeight: FontWeight.w500
+    )
+  )
 );
 
+
+
+// DarkTheme
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: const Color.fromARGB(115, 36, 36, 36),

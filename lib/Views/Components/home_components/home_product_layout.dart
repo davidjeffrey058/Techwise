@@ -52,10 +52,11 @@ class HomeProductLayout extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           boxShadow: [
                             BoxShadow(
-                                color: Color(0xffE4E4E4),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: Offset(0, 3))
+                              color: Color(0xffE4E4E4),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: Offset(0, 3),
+                            ),
                           ]),
                       height: 130,
                       width: 153,
@@ -70,6 +71,9 @@ class HomeProductLayout extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 12,
                               ),
+                              maxLines: 1,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           InkWell(

@@ -10,6 +10,9 @@ import 'package:techwise_pub/Views/pages/example_page.dart';
 import 'package:techwise_pub/Views/pages/game_page.dart';
 import 'package:techwise_pub/Views/pages/image_viewer.dart';
 import 'package:techwise_pub/Views/pages/product_page.dart';
+import 'package:techwise_pub/Views/pages/profile_page_screens/recently_viewed.dart';
+import 'package:techwise_pub/Views/pages/profile_page_screens/my_order/my_orders.dart';
+import 'package:techwise_pub/Views/pages/profile_page_screens/vouchers/vouchers.dart';
 import 'package:techwise_pub/Views/pages/search_page.dart';
 import 'package:techwise_pub/services/authenticaiton_services.dart';
 import 'package:techwise_pub/theme.dart';
@@ -56,7 +59,10 @@ class MyApp extends StatelessWidget {
         '/game_page': (context) => GamePage(),
         '/wrapper': (context) => Wrapper(title: title),
         '/example_page': (context) => ExamplePage(),
-        '/search_page': (context) => SearchPage()
+        '/search_page': (context) => SearchPage(),
+        '/my_orders' : (context) => MyOrders(),
+        '/vouchers' : (context) => Vouchers(),
+        '/recently_viewed': (context) => RecentlyViewed()
       },
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ModeSwitch>(context).isDark ? darkTheme : lightTheme,
