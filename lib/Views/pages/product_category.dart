@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:techwise_pub/Models/all_products.dart';
 import 'package:techwise_pub/Models/product_info.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
+import 'package:techwise_pub/services/data_services.dart';
+import '../../methods.dart';
 
 class ProductCategoryPage extends StatefulWidget {
   const ProductCategoryPage({Key? key}) : super(key: key);
@@ -11,25 +12,20 @@ class ProductCategoryPage extends StatefulWidget {
   State<ProductCategoryPage> createState() => _ProductCategoryPageState();
 }
 
+dynamic contents = {};
+Layouts layouts = Layouts();
+late bool isGrid;
+
 class _ProductCategoryPageState extends State<ProductCategoryPage> {
-  dynamic contents = {};
-  AllProducts allProducts = AllProducts();
-  List<ProductInfo> prudt = [];
-  Layouts layouts = Layouts();
-  late Widget whatLayout = Grid();
+  @override
+  void initState() {
+    super.initState();
+    isGrid = true;
+  }
 
   @override
   Widget build(BuildContext context) {
     contents = ModalRoute.of(context)?.settings.arguments;
-    int i = 0;
-    prudt.clear();
-    while (i < allProducts.productInfo.length) {
-      if (allProducts.productInfo[i].productCategory
-          .contains(contents['category'])) {
-        prudt.add(allProducts.productInfo[i]);
-      }
-      i++;
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -51,14 +47,37 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
           ),
         ],
       ),
-      body: prudt.isEmpty
-          ? layouts.emptyPage('No item in this category')
-          : Column(
-              children: [
-                gridAndLinear(),
-                whatLayout,
-              ],
-            ),
+      body: FutureBuilder(
+        future: DataServices().getCategoryData(contents['category']),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.hasData) {
+            if (snapshot.data!.isNotEmpty) {
+              return Column(
+                children: [
+                  gridAndLinear(),
+                  isGrid
+                      ? Grid(
+                          itemCount: snapshot.data!.length,
+                          product: snapshot.data!)
+                      : linear(
+                          itemCount: snapshot.data!.length,
+                          product: snapshot.data!)
+                ],
+              );
+            } else {
+              return layouts.emptyPage('No data');
+            }
+          } else {
+            return layouts.emptyPage('An error occurred');
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         backgroundColor: const Color(0xff0074A6),
@@ -77,113 +96,123 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
           IconButton(
             tooltip: 'Grid View',
             splashRadius: 20,
-            onPressed: () {
-              setState(() {
-                whatLayout = Grid();
-              });
-            },
+            onPressed: () => setState(() => isGrid = true),
             icon: Icon(Icons.grid_view),
+            style: ButtonStyle(
+                backgroundColor: isGrid
+                    ? MaterialStatePropertyAll(
+                        Theme.of(context).primaryColor.withOpacity(0.2))
+                    : null),
           ),
           IconButton(
             tooltip: 'List View',
             splashRadius: 20,
-            onPressed: () {
-              setState(() {
-                whatLayout = linear();
-              });
-            },
+            onPressed: () => setState(() => isGrid = false),
             icon: Icon(Icons.list),
+            style: ButtonStyle(
+                backgroundColor: !isGrid
+                    ? MaterialStatePropertyAll(
+                        Theme.of(context).primaryColor.withOpacity(0.2))
+                    : null),
           )
         ],
       ),
     );
   }
 
-  Widget Grid() {
+  Widget Grid(
+      {required int itemCount, required List<ProductProperties> product}) {
     return Flexible(
       child: GridView.builder(
         shrinkWrap: true,
-        itemCount: prudt.length,
+        itemCount: itemCount,
         gridDelegate:
             const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemBuilder: (BuildContext context, int index) {
-          //Returning a Widget inside the Layout class
-          return layouts.categoryProduct(index, context, prudt);
+          ProductProperties item = product[index];
+          return layouts.categoryProduct(index, context, item);
         },
       ),
     );
   }
 
-  Widget linear() {
+  Widget linear(
+      {required int itemCount, required List<ProductProperties> product}) {
     return Expanded(
       child: ListView.builder(
-        itemCount: prudt.length,
+        itemCount: itemCount,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
+          ProductProperties item = product[index];
           return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(11.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(
-                                'images/product_images/${prudt[index].productImage}'),
-                            fit: BoxFit.cover),
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Color(0xffE4E4E4),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                              offset: Offset(0, 2))
-                        ]),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(prudt[index].productName,
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed('/product_page', arguments: { "product" : product[index]});
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(11.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(item.imageUrl.first),
+                              fit: BoxFit.cover),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color(0xffE4E4E4),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: Offset(0, 2))
+                          ]),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(item.name,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800])),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          NumberFormat.currency(symbol: '\$').format(item.price),
                           style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey[800])),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        NumberFormat.currency(symbol: '₵')
-                            .format(prudt[index].productPrice),
-                        style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text(prudt[index].productRating.toString()),
-                          const Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                            size: 15,
-                          )
-                        ],
-                      )
-                    ],
-                  )
-                ],
+                              color: Theme.of(context).primaryColor),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                                '${rating(item.totalRating, item.numOfReviews)}'),
+                            const Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 15,
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           );

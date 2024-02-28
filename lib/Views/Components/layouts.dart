@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:techwise_pub/Models/product_info.dart';
+import 'package:techwise_pub/methods.dart';
 
 class Layouts {
   //Layouts for special products in home tab
 
   //Grid layout for the category page
-  Widget categoryProduct(index, context, prudt) {
+  Widget categoryProduct(int index, BuildContext context, ProductProperties item) {
     return GestureDetector(
       onTap: () {
-        // Navigator.pushNamed(context, '/product_page', arguments: {
-        //   'product_image': prudt[index].productImage,
-        //   'product_name': prudt[index].productName,
-        //   'product_price': prudt[index].productPrice,
-        //   'product_rating': prudt[index].productRating,
-        //   'num_review': prudt[index].numReview,
-        //   'added_to_favorite': prudt[index].addedToFavorite,
-        //   'product_description': prudt[index].productDescription
-        // });
+        Navigator.of(context).pushNamed('/product_page', arguments: { "product" : item});
       },
       child: Card(
         elevation: 3,
@@ -29,24 +23,26 @@ class Layouts {
               Image(
                   fit: BoxFit.cover,
                   height: 100,
-                  image: AssetImage(
-                      'images/product_images/${prudt[index].productImage}')),
+                  image: NetworkImage(item.imageUrl.first),
+              ),
               Text(
-                prudt[index].productName,
+                item.name,
                 style: const TextStyle(fontSize: 12),
               ),
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      NumberFormat.currency(symbol: '₵')
-                          .format(prudt[index].productPrice),
+                      NumberFormat.currency(symbol: '\$')
+                          .format(item.price),
                       style: const TextStyle(
                           color: Color(0xff0074A6),
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text(prudt[index].productRating.toString()),
+                  Text(
+                    '${rating(item.totalRating, item.numOfReviews)}'
+                  ),
                   const Icon(
                     Icons.star,
                     size: 15,

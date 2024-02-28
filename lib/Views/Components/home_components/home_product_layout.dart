@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../Models/product_info.dart';
+import '../../../methods.dart';
 
 class HomeProductLayout extends StatelessWidget {
   final List<ProductProperties> product;
   final String pageStorageKeyValue;
   const HomeProductLayout(
       {super.key, required this.product, required this.pageStorageKeyValue});
-
-  double rating(totalRating, numReviews) {
-    if (numReviews == 0) {
-      return 0;
-    }
-    return totalRating / (numReviews * 5);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +19,7 @@ class HomeProductLayout extends StatelessWidget {
           return InkWell(
             onTap: () {
               Navigator.pushNamed(context, '/product_page', arguments: {
-                'product_image': e.imageUrl,
-                'product_name': e.name,
-                'product_price': e.price,
-                'product_rating': rating(e.totalRating, e.numOfReviews),
-                'num_review': e.numOfReviews,
-                // 'added_to_favorite': e.addedToFavorite,
-                'product_description': e.description,
-                'key_properties': e.keyProperties
+                'product': e
               });
             },
             child: Container(

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:techwise_pub/Views/Authentication/wrapper.dart';
 import 'package:techwise_pub/Models/user_properties.dart';
@@ -21,6 +22,9 @@ import 'Views/pages/loading.dart';
 import 'Views/pages/product_category.dart';
 
 void main() async {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp
+  ]);
   final title = 'Techwise';
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

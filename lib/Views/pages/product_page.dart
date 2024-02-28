@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:techwise_pub/Models/product_info.dart';
 import 'package:techwise_pub/Views/Components/carousel_layout.dart';
+import 'package:techwise_pub/methods.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
@@ -24,13 +26,14 @@ class _ProductPageState extends State<ProductPage> {
   //   print(urls);
   // }
 
-  List urls = [];
+
+  late ProductProperties product;
 
   @override
   Widget build(BuildContext context) {
     // getUrl();
     data = ModalRoute.of(context)?.settings.arguments;
-    urls = data['product_image'];
+   product = data['product'];
 
     return Scaffold(
       appBar: AppBar(
@@ -66,12 +69,12 @@ class _ProductPageState extends State<ProductPage> {
                               autoPlayInterval: Duration(seconds: 3),
                               aspectRatio: 16 / 9,
                               enlargeCenterPage: true),
-                          items: urls
+                          items: product.imageUrl
                               .map((e) => InkWell(
                                   onTap: () => Navigator.pushNamed(
                                           context, '/image_viewer',
                                           arguments: {
-                                            'picture': urls,
+                                            'picture': product.imageUrl,
                                           }),
                                   child: CarouselLayout(value: e)))
                               .toList()),
@@ -87,7 +90,7 @@ class _ProductPageState extends State<ProductPage> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    data['product_name'],
+                                    product.name,
                                     style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -105,7 +108,7 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             Text(
                               NumberFormat.currency(locale: 'en_US')
-                                  .format(data['product_price']),
+                                  .format(product.price),
                               style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -117,7 +120,7 @@ class _ProductPageState extends State<ProductPage> {
                             Row(
                               children: [
                                 Text(
-                                  data['product_rating'].toString(),
+                                  '${rating(product.totalRating, product.numOfReviews)}',
                                 ),
                                 const Icon(
                                   Icons.star,
@@ -128,7 +131,7 @@ class _ProductPageState extends State<ProductPage> {
                                   width: 12,
                                 ),
                                 Text(
-                                    '(${data['num_review'].toString()} Reviews)')
+                                    '(${product.numOfReviews} Reviews)')
                               ],
                             ),
                             const SizedBox(
@@ -145,8 +148,9 @@ class _ProductPageState extends State<ProductPage> {
                               height: 5,
                             ),
                             Text(
-                              data['product_description'],
+                              product.description,
                               style: const TextStyle(fontSize: 12),
+                              textAlign: TextAlign.justify,
                             ),
                             SizedBox(
                               height: 25,
@@ -162,53 +166,52 @@ class _ProductPageState extends State<ProductPage> {
                               height: 10,
                             ),
                             //Displays a table for the product properties
-                            if (data['key_properties'] != null)
-                              ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: data['key_properties'].length,
-                                itemBuilder: (context, index) {
-                                  var property = data['key_properties']
-                                      .values
-                                      .toList()[index];
-                                  var propertyName = data['key_properties']
-                                      .keys
-                                      .toList()[index];
-                                  return Table(
-                                    // border: TableBorder.all(),
-                                    children: [
-                                      TableRow(children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[400],
-                                              border: BorderDirectional(
-                                                  bottom: BorderSide(
-                                                      color: Colors.white))),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              '${propertyName}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                            ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: product.keyProperties.length,
+                              itemBuilder: (context, index) {
+                                var property = product.keyProperties
+                                    .values
+                                    .toList()[index];
+                                var propertyName = product.keyProperties
+                                    .keys
+                                    .toList()[index];
+                                return Table(
+                                  // border: TableBorder.all(),
+                                  children: [
+                                    TableRow(children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[400],
+                                            border: BorderDirectional(
+                                                bottom: BorderSide(
+                                                    color: Colors.white))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            '${propertyName}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[200],
-                                              border: BorderDirectional(
-                                                  bottom: BorderSide(
-                                                      color: Colors.white))),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('${property}'),
-                                          ),
-                                        )
-                                      ])
-                                    ],
-                                  );
-                                },
-                              ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            border: BorderDirectional(
+                                                bottom: BorderSide(
+                                                    color: Colors.white))),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('${property}'),
+                                        ),
+                                      )
+                                    ])
+                                  ],
+                                );
+                              },
+                            ),
                             SizedBox(
                               height: 25,
                             ),
