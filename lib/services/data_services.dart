@@ -4,7 +4,7 @@ import 'package:techwise_pub/Models/product_info.dart';
 
 class DataServices {
   final docRef = FirebaseFirestore.instance.collection('products');
-
+  final userRef = FirebaseFirestore.instance.collection('Users');
   final instance = FirebaseStorage.instance.ref();
 
   // AuthenticationServices services = AuthenticationServices();
@@ -45,29 +45,22 @@ class DataServices {
     return productList;
   }
 
-  Stream<List<ProductProperties>> getCartOrWishlistData(
-      String uid, bool isCart) {
+  // Stream userData(String uid){
+  //   userRef.doc(uid).snapshots().listen((event) {
+  //     print(event.data());
+  //   })
+  // }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getCartOrWishlistData(String uid, bool isCart) {
     String collectionPath = isCart ? 'cart' : 'wishlist';
+    // List<ProductProperties> list = [];
     final userRef = FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
         .collection(collectionPath);
-    return userRef.snapshots().map((snapshot) => snapshot.docs.map((e) {
-          final data = e.data();
-          return ProductProperties(
-              productId: e.id,
-              name: data['name'],
-              numOfReviews: data['numberOfReviews'],
-              price: data['price'],
-              totalRating: data['totalRating'],
-              imageUrl: data['imageUrl'].toList(),
-              keyProperties: data['keyProperties'],
-              description: data['description'],
-              category: data['category'],
-              subCategory: data['subCategory'],
-              Quantity: data['quantity']);
-        }).toList());
+    return userRef.snapshots();
   }
+
 
   Future<List<ProductProperties>> getCategoryData(String category) async {
     List<ProductProperties> productList = [];
