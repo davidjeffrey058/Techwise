@@ -69,7 +69,7 @@ class DataServices {
         }).toList());
   }
 
-  Future<List<ProductProperties>>? getCategoryData(String category) async {
+  Future<List<ProductProperties>> getCategoryData(String category) async {
     List<ProductProperties> productList = [];
     await docRef.where("category", isEqualTo: category).get().then((value) {
       for (var result in value.docs) {

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:techwise_pub/States/grid_or_list.dart';
 import 'package:techwise_pub/Views/Authentication/wrapper.dart';
 import 'package:techwise_pub/Models/user_properties.dart';
 import 'package:techwise_pub/States/mode_switch.dart';
@@ -34,6 +35,7 @@ void main() async {
         create: (context) => AuthenticationServices().authenticationState,
         initialData: null),
     ChangeNotifierProvider<ModeSwitch>(create: (context) => ModeSwitch()),
+    ChangeNotifierProvider<GridOrListProvider>(create: (context) => GridOrListProvider())
     // StreamProvider<ProductProperties?>(create: (context) => DataServices().getData, initialData: null,)
   ], child: MyApp(title: title)));
 }
@@ -69,7 +71,7 @@ class MyApp extends StatelessWidget {
         '/recently_viewed': (context) => RecentlyViewed()
       },
       debugShowCheckedModeBanner: false,
-      theme: Provider.of<ModeSwitch>(context).isDark ? darkTheme : lightTheme,
+      theme: context.watch<ModeSwitch>().isDark ? darkTheme : lightTheme,
     );
   }
 }

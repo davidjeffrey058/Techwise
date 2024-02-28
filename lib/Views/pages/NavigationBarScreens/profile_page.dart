@@ -44,6 +44,7 @@ class _NewProfilePageState extends State<NewProfilePage> {
               tooltip: 'Dark mode',
               onPressed: () {
                 // Provider.of<ModeSwitch>(context, listen: false).toggle()
+                // context.read<ModeSwitch>().toggle();
               },
               icon: Icon(
                 Icons.sunny,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:techwise_pub/Models/product_info.dart';
+import 'package:techwise_pub/States/grid_or_list.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
 import 'package:techwise_pub/services/data_services.dart';
 import '../../methods.dart';
@@ -14,18 +16,15 @@ class ProductCategoryPage extends StatefulWidget {
 
 dynamic contents = {};
 Layouts layouts = Layouts();
-late bool isGrid;
 
 class _ProductCategoryPageState extends State<ProductCategoryPage> {
-  @override
-  void initState() {
-    super.initState();
-    isGrid = true;
-  }
 
   @override
   Widget build(BuildContext context) {
+
     contents = ModalRoute.of(context)?.settings.arguments;
+    GridOrListSelector _selector = context.watch<GridOrListProvider>().selector;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -60,8 +59,12 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
             if (snapshot.data!.isNotEmpty) {
               return Column(
                 children: [
-                  gridAndLinear(),
-                  isGrid
+                  gridAndList(
+                    state: _selector,
+                    gridFunction: () => context.read<GridOrListProvider>().toggle(GridOrListSelector.grid),
+                    listViewFunction: () => context.read<GridOrListProvider>().toggle(GridOrListSelector.list),
+                  ),
+                  _selector == GridOrListSelector.grid
                       ? Grid(
                           itemCount: snapshot.data!.length,
                           product: snapshot.data!)
@@ -87,7 +90,10 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
     );
   }
 
-  gridAndLinear() {
+  gridAndList(
+      {required GridOrListSelector state,
+      void Function()? gridFunction,
+      void Function()? listViewFunction}) {
     return Container(
       decoration: BoxDecoration(color: Colors.white),
       child: Row(
@@ -96,10 +102,10 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
           IconButton(
             tooltip: 'Grid View',
             splashRadius: 20,
-            onPressed: () => setState(() => isGrid = true),
+            onPressed: gridFunction,
             icon: Icon(Icons.grid_view),
             style: ButtonStyle(
-                backgroundColor: isGrid
+                backgroundColor: state == GridOrListSelector.grid
                     ? MaterialStatePropertyAll(
                         Theme.of(context).primaryColor.withOpacity(0.2))
                     : null),
@@ -107,10 +113,10 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
           IconButton(
             tooltip: 'List View',
             splashRadius: 20,
-            onPressed: () => setState(() => isGrid = false),
+            onPressed: listViewFunction,
             icon: Icon(Icons.list),
             style: ButtonStyle(
-                backgroundColor: !isGrid
+                backgroundColor: state == GridOrListSelector.list
                     ? MaterialStatePropertyAll(
                         Theme.of(context).primaryColor.withOpacity(0.2))
                     : null),
@@ -124,6 +130,7 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
       {required int itemCount, required List<ProductProperties> product}) {
     return Flexible(
       child: GridView.builder(
+        key: PageStorageKey('category'),
         shrinkWrap: true,
         itemCount: itemCount,
         gridDelegate:
@@ -140,6 +147,7 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
       {required int itemCount, required List<ProductProperties> product}) {
     return Expanded(
       child: ListView.builder(
+        key: PageStorageKey('category'),
         itemCount: itemCount,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
@@ -148,7 +156,8 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
             clipBehavior: Clip.hardEdge,
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed('/product_page', arguments: { "product" : product[index]});
+                Navigator.of(context).pushNamed('/product_page',
+                    arguments: {"product": product[index]});
               },
               child: Padding(
                 padding: const EdgeInsets.all(11.0),
@@ -189,7 +198,8 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                           height: 5,
                         ),
                         Text(
-                          NumberFormat.currency(symbol: '\$').format(item.price),
+                          NumberFormat.currency(symbol: '\$')
+                              .format(item.price),
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
@@ -221,3 +231,5 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
     );
   }
 }
+
+enum GridOrListSelector { grid, list }
