@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:techwise_pub/Models/product_info.dart';
 import 'package:techwise_pub/States/grid_or_list.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
+import 'package:techwise_pub/Views/Components/product_layout_main.dart';
 import 'package:techwise_pub/services/data_services.dart';
 import '../../methods.dart';
 
@@ -18,10 +18,8 @@ dynamic contents = {};
 Layouts layouts = Layouts();
 
 class _ProductCategoryPageState extends State<ProductCategoryPage> {
-
   @override
   Widget build(BuildContext context) {
-
     contents = ModalRoute.of(context)?.settings.arguments;
     GridOrListSelector _selector = context.watch<GridOrListProvider>().selector;
 
@@ -61,8 +59,12 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                 children: [
                   gridAndList(
                     state: _selector,
-                    gridFunction: () => context.read<GridOrListProvider>().toggle(GridOrListSelector.grid),
-                    listViewFunction: () => context.read<GridOrListProvider>().toggle(GridOrListSelector.list),
+                    gridFunction: () => context
+                        .read<GridOrListProvider>()
+                        .toggle(GridOrListSelector.grid),
+                    listViewFunction: () => context
+                        .read<GridOrListProvider>()
+                        .toggle(GridOrListSelector.list),
                   ),
                   _selector == GridOrListSelector.grid
                       ? Grid(
@@ -128,17 +130,26 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
 
   Widget Grid(
       {required int itemCount, required List<ProductProperties> product}) {
-    return Flexible(
-      child: GridView.builder(
-        key: PageStorageKey('category'),
-        shrinkWrap: true,
-        itemCount: itemCount,
-        gridDelegate:
-            const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-        itemBuilder: (BuildContext context, int index) {
-          ProductProperties item = product[index];
-          return layouts.categoryProduct(index, context, item);
-        },
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GridView.builder(
+          key: PageStorageKey('category'),
+          shrinkWrap: true,
+          itemCount: itemCount,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5,
+            mainAxisSpacing: 5,
+            mainAxisExtent: 240,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            ProductProperties item = product[index];
+            return ProductLayoutMain(
+              product: item,
+            );
+          },
+        ),
       ),
     );
   }
@@ -189,17 +200,19 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                         SizedBox(
                           height: 5,
                         ),
-                        Text(item.name,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[800])),
+                        Text(
+                          item.name,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
                         SizedBox(
                           height: 5,
                         ),
                         Text(
-                          NumberFormat.currency(symbol: '\$')
-                              .format(item.price),
+                          currency(item.price),
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,

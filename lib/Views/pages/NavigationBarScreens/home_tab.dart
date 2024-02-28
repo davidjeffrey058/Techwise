@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:techwise_pub/Views/Components/home_components/special_product_section.dart';
 import 'package:techwise_pub/Views/Components/home_components/title_section.dart';
+import 'package:techwise_pub/Views/Components/product_layout_main.dart';
 import 'package:techwise_pub/Views/Components/product_loading.dart';
+import 'package:techwise_pub/Views/pages/product_category.dart';
 import 'package:techwise_pub/services/data_services.dart';
 import 'package:techwise_pub/Models/all_products.dart';
 import 'package:techwise_pub/Models/product_info.dart';
@@ -73,8 +75,8 @@ class _HomeTabState extends State<HomeTab> {
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemCount: 5,
-                          itemBuilder: (context, index){
-                            return  ProductLoading();
+                          itemBuilder: (context, index) {
+                            return ProductLoading();
                           },
                         ),
                       );
@@ -107,8 +109,8 @@ class _HomeTabState extends State<HomeTab> {
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemCount: 5,
-                          itemBuilder: (context, index){
-                            return  ProductLoading();
+                          itemBuilder: (context, index) {
+                            return ProductLoading();
                           },
                         ),
                       );
@@ -129,6 +131,67 @@ class _HomeTabState extends State<HomeTab> {
                     }
                   },
                 ),
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.blue,
+                        Colors.purple,
+                        Colors.purpleAccent
+                      ]
+                    )
+                  ),
+                  child: Center(
+                    child: Text('All your products here', style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15
+                    ),),
+                  ),
+                ),
+                FutureBuilder(
+                  future: dataInstance,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 150,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GridView.builder(
+                          itemCount: snapshot.data!.length,
+                          shrinkWrap: true,
+                          primary: false,
+                          itemBuilder: (context, index) {
+                            return ProductLayoutMain(
+                                product: snapshot.data![index]);
+                          },
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            mainAxisExtent: 240,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return layouts.emptyPage('Couldn\'t get data');
+                    }
+                  },
+                )
               ],
             ),
           ),
