@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:techwise_pub/Models/product_info.dart';
+import 'package:techwise_pub/Views/Components/custom_icon.dart';
 import 'package:techwise_pub/methods.dart';
 
 class ProductLayoutMain extends StatelessWidget {
@@ -22,28 +23,20 @@ class ProductLayoutMain extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  Material(
-                    color: Colors.grey.shade300,
-                    child: Image(
-                      height: 150,
-                      width: double.infinity,
-                      image: NetworkImage(product.imageUrl.first),
-                      fit: BoxFit.cover,
+                  Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(product.imageUrl.first),
+                      )
                     ),
                   ),
                   Positioned(
                     top: 5,
                     right: 5,
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.favorite_border_rounded,
-                        color: Colors.red,
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(Colors.white),
-                          elevation: MaterialStatePropertyAll(2)),
-                    ),
+                    child: FavoriteIcon(isIconButton: true, productId: product.productId,)
                   )
                 ],
               ),

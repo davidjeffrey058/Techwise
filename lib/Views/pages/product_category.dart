@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:techwise_pub/Models/product_info.dart';
 import 'package:techwise_pub/States/grid_or_list.dart';
+import 'package:techwise_pub/Views/Components/custom_icon.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
 import 'package:techwise_pub/Views/Components/product_layout_main.dart';
 import 'package:techwise_pub/services/data_services.dart';
@@ -179,17 +180,19 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                       height: 100,
                       width: 100,
                       decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
                           image: DecorationImage(
                               image: NetworkImage(item.imageUrl.first),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.all(Radius.circular(8)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Color(0xffE4E4E4),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: Offset(0, 2))
-                          ]),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //       color: Color(0xffE4E4E4),
+                          //       spreadRadius: 1,
+                          //       blurRadius: 3,
+                          //       offset: Offset(0, 2))
+                          // ],
+                      ),
                     ),
                     SizedBox(
                       width: 10,
@@ -202,6 +205,8 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                         ),
                         Text(
                           item.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -233,7 +238,9 @@ class _ProductCategoryPageState extends State<ProductCategoryPage> {
                           ],
                         )
                       ],
-                    )
+                    ),
+                    Spacer(),
+                    FavoriteIcon(isIconButton: true, productId: item.productId,)
                   ],
                 ),
               ),

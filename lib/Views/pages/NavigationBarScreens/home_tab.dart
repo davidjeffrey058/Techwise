@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:techwise_pub/Views/Components/home_components/special_product_section.dart';
 import 'package:techwise_pub/Views/Components/home_components/title_section.dart';
@@ -168,22 +169,24 @@ class _HomeTabState extends State<HomeTab> {
                     }
 
                     if (snapshot.hasData) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GridView.builder(
-                          itemCount: snapshot.data!.length,
-                          shrinkWrap: true,
-                          primary: false,
-                          itemBuilder: (context, index) {
-                            return ProductLayoutMain(
-                                product: snapshot.data![index]);
-                          },
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            mainAxisExtent: 240,
+                      return Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: GridView.builder(
+                            itemCount: snapshot.data!.length,
+                            shrinkWrap: true,
+                            primary: false,
+                            itemBuilder: (context, index) {
+                              return ProductLayoutMain(
+                                  product: snapshot.data![index]);
+                            },
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                              mainAxisExtent: 240,
+                            ),
                           ),
                         ),
                       );

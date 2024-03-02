@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:techwise_pub/Models/product_info.dart';
+import 'package:techwise_pub/methods.dart';
 
 class CartItemLayout extends StatelessWidget {
   final Function()? increase;
   final Function()? decrease;
   final Function()? remove;
-  final int index;
-  final List list;
+  final ProductProperties product;
 
   const CartItemLayout(
       {super.key,
       this.increase,
       this.decrease,
       this.remove,
-      required this.index,
-      required this.list});
+      required this.product});
 
   @override
   Widget build(BuildContext context) {
-    int itemQuantity = list[index].numOfOrder;
+    int itemQuantity = product.Quantity;
     return Container(
       clipBehavior: Clip.hardEdge,
       margin: EdgeInsets.fromLTRB(14, 14, 14, 0),
@@ -44,8 +43,7 @@ class CartItemLayout extends StatelessWidget {
                         Image(
                           width: 66,
                           height: 66,
-                          image: AssetImage(
-                              'images/product_images/${list[index].productImage}'),
+                          image: NetworkImage(product.imageUrl.first),
                         ),
                         SizedBox(
                           width: 11,
@@ -54,7 +52,7 @@ class CartItemLayout extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              list[index].productName,
+                              product.name,
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -64,8 +62,7 @@ class CartItemLayout extends StatelessWidget {
                               height: 5,
                             ),
                             Text(
-                              NumberFormat.currency(symbol: '₵')
-                                  .format(list[index].productPrice),
+                              currency(product.price),
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,

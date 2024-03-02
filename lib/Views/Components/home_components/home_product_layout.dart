@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:techwise_pub/Views/Components/custom_icon.dart';
 import '../../../Models/product_info.dart';
 import '../../../methods.dart';
 
@@ -32,6 +33,7 @@ class HomeProductLayout extends StatelessWidget {
                     ),
                     Container(
                       decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
                           image: DecorationImage(
                             image: NetworkImage(e.imageUrl.first),
                             fit: BoxFit.cover,
@@ -63,14 +65,9 @@ class HomeProductLayout extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          InkWell(
-                              onTap: () {
-                                // pressed.call();
-                              },
-                              child: Icon(
-                                Icons.favorite_border,
-                                color: Colors.red,
-                              ))
+                          FavoriteIcon(
+                            productId: e.productId,
+                          ),
                         ],
                       ),
                     ),

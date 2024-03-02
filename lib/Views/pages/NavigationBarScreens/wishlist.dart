@@ -80,6 +80,7 @@ class _WishListState extends State<WishList> {
   Widget cartLayout(
       {required ProductProperties product}) {
     return Material(
+      clipBehavior: Clip.hardEdge,
       borderRadius: BorderRadius.circular(10),
       elevation: 1,
       child: InkWell(

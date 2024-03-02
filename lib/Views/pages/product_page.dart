@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:techwise_pub/Models/product_info.dart';
 import 'package:techwise_pub/Views/Components/carousel_layout.dart';
+import 'package:techwise_pub/Views/Components/custom_icon.dart';
 import 'package:techwise_pub/methods.dart';
 
 class ProductPage extends StatefulWidget {
@@ -14,18 +15,6 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   dynamic data = {};
-  // Future getUrl() async{
-  //
-  //   List urls = [];
-  //
-  //   final instance = FirebaseStorage.instance.ref();
-  //   var res = await instance.child('products/techwis-laptop-0002/').list();
-  //   for(var items in res.items){
-  //     urls.add(await items.getDownloadURL());
-  //   }
-  //   print(urls);
-  // }
-
 
   late ProductProperties product;
 
@@ -97,15 +86,12 @@ class _ProductPageState extends State<ProductPage> {
                                         color: Color(0xff707070)),
                                   ),
                                 ),
-                                Icon(
-                                  Icons.favorite_border,
-                                  color: Colors.red,
-                                )
+                                FavoriteIcon(isIconButton: true, productId: product.productId,)
                               ],
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
+                            // const SizedBox(
+                            //   height: 5,
+                            // ),
                             Text(
                               NumberFormat.currency(locale: 'en_US')
                                   .format(product.price),

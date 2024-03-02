@@ -45,23 +45,40 @@ class DataServices {
     return productList;
   }
 
-  // Stream userData(String uid){
-  //   userRef.doc(uid).snapshots().listen((event) {
-  //     print(event.data());
-  //   })
-  // }
-
+  // Get cart or wishlist data
   Stream<QuerySnapshot<Map<String, dynamic>>> getCartOrWishlistData(String uid, bool isCart) {
     String collectionPath = isCart ? 'cart' : 'wishlist';
     // List<ProductProperties> list = [];
-    final userRef = FirebaseFirestore.instance
-        .collection('Users')
+    final pathRef = userRef
         .doc(uid)
         .collection(collectionPath);
-    return userRef.snapshots();
+    return pathRef.snapshots();
+  }
+  
+  // Add an Item to cart or wishlist
+  Future<void> addToCartOrWishlist(String uid, bool isCart, ProductProperties product) async{
+    String collectionPath = isCart ? 'cart' : 'wishlist';
+    try{
+      userRef.doc(uid).collection(collectionPath)
+          .add({
+        'name' : product.name,
+        'numberOfReviews' : product.numOfReviews,
+        'price' : product.price,
+        'totalRating' : product.totalRating,
+        'imageUrl' : product.imageUrl,
+        'keyProperties' : product.keyProperties,
+        'description' : product.description,
+        'category' : product.category,
+        'subCategory' : product.subCategory,
+        'quantity' : product.Quantity
+      });
+    } catch (error){
+
+    }
+
   }
 
-
+// Get product data based on category of the product
   Future<List<ProductProperties>> getCategoryData(String category) async {
     List<ProductProperties> productList = [];
     await docRef.where("category", isEqualTo: category).get().then((value) {

@@ -45,6 +45,10 @@ ThemeData lightTheme = ThemeData(
     labelStyle: TextStyle(
       fontWeight: FontWeight.w500
     )
+  ),
+  cardColor: Colors.white,
+  cardTheme: CardTheme(
+    color: Colors.white
   )
 );
 

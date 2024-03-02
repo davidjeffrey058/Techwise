@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:techwise_pub/Views/Components/cart_item_layout.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
+import 'package:techwise_pub/services/data_services.dart';
 import '../../Models/product_info.dart';
 import 'package:intl/intl.dart';
+
+import '../../Models/user_properties.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -46,50 +50,55 @@ class _CartState extends State<Cart> {
   ];
   Layouts layouts = Layouts();
 
-  late double delivery;
+  // late double delivery;
   late double subtotal;
   double promoDiscount = 0.0;
 
   cartTotal() {
     double total = 0;
-    for (int i = 0; i < cartProduct.length; i++) {
-      total += (cartProduct[i].productPrice * cartProduct[i].numOfOrder);
-    }
+    cartProduct.forEach((element) {
+      total += element.productPrice * element.numOfOrder;
+    });
     return total;
+  }
+
+  double delivery(int listLength) {
+    return 20.0 * listLength;
   }
 
   @override
   Widget build(BuildContext context) {
-    delivery = (20 * cartProduct.length.toDouble());
-    subtotal = cartTotal() + delivery + promoDiscount;
+    // delivery = (20 * cartProduct.length.toDouble());
+    subtotal = cartTotal() + delivery(cartProduct.length) + promoDiscount;
     final textTheme = Theme.of(context).textTheme;
 
-    Widget cartLayout() {
+    final user = Provider.of<UserProperties?>(context);
+
+    Widget cartLayout({required List<ProductProperties> products}) {
       return Column(
         children: [
           Flexible(
-            flex: 4,
+            // flex: 4,
             child: ListView.builder(
-              itemCount: cartProduct.length,
+              itemCount: products.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return CartItemLayout(
-                    index: index,
                     increase: () {
-                      setState(() {
-                        cartProduct[index].increaseNumOfOrder();
-                      });
+                      // setState(() {
+                      //   cartProduct[index].increaseNumOfOrder();
+                      // });
                     },
                     decrease: () {
-                      setState(() {
-                        cartProduct[index].decreaseNumOfOrder();
-                      });
+                      // setState(() {
+                      //   cartProduct[index].decreaseNumOfOrder();
+                      // },);
                     },
-                    list: cartProduct,
+                    product: products[index],
                     remove: () {
-                      setState(() {
-                        cartProduct.removeAt(index);
-                      });
+                      // setState(() {
+                      //   cartProduct.removeAt(index);
+                      // });
                     });
               },
             ),
@@ -140,7 +149,8 @@ class _CartState extends State<Cart> {
                   height: 20,
                 ),
                 //Delivery
-                annotations(heading: 'Delivery', value: delivery),
+                annotations(
+                    heading: 'Delivery', value: delivery(cartProduct.length)),
                 const SizedBox(
                   height: 20,
                 ),
@@ -191,23 +201,44 @@ class _CartState extends State<Cart> {
             ))
           ],
         ),
-        body: cartProduct.isEmpty
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  layouts.emptyPage('No product added to your cart'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    child: Text('Start shopping'),
-                    onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName('/home'));
-                    },
-                  )
-                ],
-              )
-            : cartLayout());
+        body: StreamBuilder(
+          stream: DataServices().getCartOrWishlistData(user!.uid, true),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              if (snapshot.data == null) {
+                return Center(
+                  child: layouts.emptyPage('No item added to cart'),
+                );
+              } else {
+                List<ProductProperties> cartProducts = [];
+                for (var data in snapshot.data!.docs) {
+                  cartProducts.add(ProductProperties(
+                    productId: data.id,
+                    name: data['name'],
+                    numOfReviews: data['numOfReviews'],
+                    price: data['price'],
+                    totalRating: data['totalRating'],
+                    imageUrl: data['imageUrl'].toList(),
+                    keyProperties: data['keyProperties'],
+                    description: data['description'],
+                    category: data['category'],
+                    subCategory: data['subCategory'],
+                    Quantity: data['Quantity'],
+                  ));
+                }
+                return cartLayout(products: cartProducts);
+              }
+            } else {
+              return Center(
+                child: layouts.emptyPage('Couldn\'t retrieve data!'),
+              );
+            }
+          },
+        ));
   }
 
   Widget annotations(
