@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:techwise_pub/Views/Components/home_components/special_product_section.dart';
 import 'package:techwise_pub/Views/Components/home_components/title_section.dart';
