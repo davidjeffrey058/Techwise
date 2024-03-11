@@ -77,7 +77,7 @@ class _CartState extends State<Cart> {
     Widget cartLayout({required List<ProductProperties> products}) {
       return Column(
         children: [
-          Flexible(
+          Expanded(
             // flex: 4,
             child: ListView.builder(
               itemCount: products.length,
@@ -137,7 +137,7 @@ class _CartState extends State<Cart> {
                   )
                 ],
               )),
-          Spacer(),
+          SizedBox(height: 30,),
           //The calculation summary
           Container(
             margin: EdgeInsets.only(right: 26, left: 26),

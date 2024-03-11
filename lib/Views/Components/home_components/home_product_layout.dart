@@ -8,7 +8,7 @@ class HomeProductLayout extends StatelessWidget {
   final List<ProductProperties> product;
   final String pageStorageKeyValue;
   const HomeProductLayout(
-      {super.key, required this.product, required this.pageStorageKeyValue});
+      {super.key, required this.product, required this.pageStorageKeyValue,});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class HomeProductLayout extends StatelessWidget {
           return InkWell(
             onTap: () {
               Navigator.pushNamed(context, '/product_page', arguments: {
-                'product': e
+                'product': e,
               });
             },
             child: Container(
@@ -31,13 +31,11 @@ class HomeProductLayout extends StatelessWidget {
                     const SizedBox(
                       height: 8,
                     ),
+                    // Product image container
                     Container(
+                      clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
-                          image: DecorationImage(
-                            image: NetworkImage(e.imageUrl.first),
-                            fit: BoxFit.cover,
-                          ),
                           borderRadius: BorderRadius.all(Radius.circular(12)),
                           boxShadow: [
                             BoxShadow(
@@ -49,6 +47,22 @@ class HomeProductLayout extends StatelessWidget {
                           ]),
                       height: 130,
                       width: 153,
+                      child: Image.network(
+                        e.imageUrl.first,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress){
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null ?
+                              loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context,error, stackTrace){
+                          return Icon(Icons.image, size: 50, color: Colors.white,);
+                        },
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),

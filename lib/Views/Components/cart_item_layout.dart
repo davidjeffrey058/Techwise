@@ -40,10 +40,16 @@ class CartItemLayout extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Image(
+                        Container(
                           width: 66,
                           height: 66,
-                          image: NetworkImage(product.imageUrl.first),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            image: DecorationImage(
+                              image: NetworkImage(product.imageUrl.first),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         SizedBox(
                           width: 11,

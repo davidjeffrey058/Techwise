@@ -24,13 +24,24 @@ class ProductLayoutMain extends StatelessWidget {
               Stack(
                 children: [
                   Container(
+                    color: Colors.grey[200],
                     height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(product.imageUrl.first),
-                      )
+                    width: double.infinity,
+                    child:Image.network(
+                     product.imageUrl.first,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress){
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null ?
+                            loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context,error, stackTrace){
+                        return Icon(Icons.image, size: 50, color: Colors.white,);
+                      },
                     ),
                   ),
                   Positioned(
