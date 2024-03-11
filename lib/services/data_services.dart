@@ -102,4 +102,19 @@ class DataServices {
     return productList;
   }
 
+  // Increase or Decrease the order quantity of a product
+  Future? updateOrderQuantity(int quantity, String? uid, String productId) async {
+    if(uid == null){
+      return null;
+    }
+    try{
+      await userRef.doc(uid).collection('cart').doc(productId).update({'orderQuantity' : quantity});
+      return true;
+    } catch (err){
+      return false;
+    }
+  }
+
+
+
 }

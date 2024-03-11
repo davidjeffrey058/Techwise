@@ -17,7 +17,6 @@ class CartItemLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int itemQuantity = product.Quantity;
     return Container(
       clipBehavior: Clip.hardEdge,
       margin: EdgeInsets.fromLTRB(14, 14, 14, 0),
@@ -28,17 +27,18 @@ class CartItemLayout extends StatelessWidget {
           ]),
       child: Material(
         color: Colors.white,
-        child: InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.pushNamed(context, '/product_page',
+                        arguments: {"product": product, "hide": true}),
+                    child: Row(
                       children: [
                         Container(
                           width: 66,
@@ -78,65 +78,104 @@ class CartItemLayout extends StatelessWidget {
                         )
                       ],
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        remove;
-                      },
-                      icon: Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                      label: Text(
-                        'REMOVE',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStatePropertyAll(Colors.transparent),
-                          elevation: MaterialStatePropertyAll(0),
-                          overlayColor:
-                              MaterialStatePropertyAll(Colors.red[100])),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    //The increment button
-                    gradientButton(increase, '+'),
-                    SizedBox(
-                      height: 7,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                          border: Border.all(
-                            width: 1,
-                          )),
-                      child: Text(
-                        itemQuantity.toString(),
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 7,
-                    ),
+                  ),
 
-                    //The decrement button
-                    gradientButton(decrease, '-'),
-                  ],
-                )
-              ],
-            ),
+                  // Remove cart item button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Confirm Removal'),
+                              content: Text(
+                                  'Do you want to remove this product from your wishlist?'),
+                              actions: [
+                                OutlinedButton(
+                                    onPressed: remove,
+                                    child: Text(
+                                      'Remove',
+                                      style: TextStyle(color: Colors.red),
+                                    )),
+                                OutlinedButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: Text('Cancel')),
+                              ],
+                            );
+                          });
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    label: Text(
+                      'REMOVE',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.transparent),
+                        elevation: MaterialStatePropertyAll(0),
+                        overlayColor:
+                            MaterialStatePropertyAll(Colors.red[100])),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  //The increment button
+                  gradientButton(
+                      increase, '+', product.orderQuantity!, product.Quantity),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        border: Border.all(
+                          width: 1,
+                        )),
+                    child: Text(
+                      product.orderQuantity.toString(),
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  gradientButton(
+                      decrease, '-', product.orderQuantity!, product.Quantity),
+                ],
+              )
+            ],
           ),
         ),
       ),
     );
   }
 
-  gradientButton(void Function()? method, String symbol) {
+  gradientButton(void Function()? method, String symbol, int orderQuantity,
+      int productQuantity) {
+    List<Color> colorList;
+    if (symbol == '-') {
+      colorList = orderQuantity <= 1
+          ? [
+              Colors.grey.shade200,
+              Colors.grey,
+            ]
+          : [Color(0xff95C6DA), Color(0xff459ABE)];
+    } else {
+      colorList = orderQuantity >= productQuantity
+          ? [
+              Colors.grey.shade200,
+              Colors.grey,
+            ]
+          : [Color(0xff95C6DA), Color(0xff459ABE)];
+    }
     return InkWell(
       onTap: method,
       child: Container(
@@ -145,7 +184,7 @@ class CartItemLayout extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(6)),
             gradient: LinearGradient(
-                colors: [Color(0xff95C6DA), Color(0xff459ABE)],
+                colors: colorList,
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter)),
         child: Center(

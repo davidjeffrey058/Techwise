@@ -47,6 +47,7 @@ class ProductProperties{
   String? subCategory;
   Map<String, dynamic> keyProperties;
   int Quantity;
+  int? orderQuantity;
 
   ProductProperties({
     required this.name,
@@ -60,5 +61,6 @@ class ProductProperties{
     required this.keyProperties,
     required this.Quantity,
     required this.productId,
+    this.orderQuantity
 });
 }

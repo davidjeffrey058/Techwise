@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techwise_pub/Views/Components/cart_item_layout.dart';
 import 'package:techwise_pub/Views/Components/layouts.dart';
+import 'package:techwise_pub/methods.dart';
 import 'package:techwise_pub/services/data_services.dart';
 import '../../Models/product_info.dart';
-import 'package:intl/intl.dart';
 
 import '../../Models/user_properties.dart';
 
@@ -16,62 +16,29 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
-  List<ProductInfo> cartProduct = [
-    ProductInfo(
-        productName: 'Dell G16 gaming laptop',
-        productPrice: 28999,
-        productRating: 0,
-        productDescription: 'powerful gaming laptop',
-        productCategory: 'Laptops',
-        addedToCart: false,
-        addedToFavorite: false,
-        numReview: 0,
-        productImage: 'dell_gaming_laptop.jpg'),
-    ProductInfo(
-        productName: 'Alienware m15 gaming laptop',
-        productPrice: 37295,
-        productRating: 0,
-        productDescription: 'powerful gaming laptop',
-        productCategory: 'Laptops',
-        addedToCart: false,
-        addedToFavorite: false,
-        numReview: 0,
-        productImage: 'alienware_m15.jpg'),
-    ProductInfo(
-        productName: 'Alienware m15 gaming laptop',
-        productPrice: 37295,
-        productRating: 0,
-        productDescription: 'powerful gaming laptop',
-        productCategory: 'Laptops',
-        addedToCart: false,
-        addedToFavorite: false,
-        numReview: 0,
-        productImage: 'alienware_m15.jpg'),
-  ];
+
   Layouts layouts = Layouts();
-
-  // late double delivery;
-  late double subtotal;
   double promoDiscount = 0.0;
+  final dataInstance = DataServices();
 
-  cartTotal() {
+  double cartTotal(List<ProductProperties> list) {
     double total = 0;
-    cartProduct.forEach((element) {
-      total += element.productPrice * element.numOfOrder;
+    list.forEach((element) {
+      total += element.price * element.orderQuantity!;
     });
     return total;
   }
-
   double delivery(int listLength) {
-    return 20.0 * listLength;
+    return 10.0 * listLength;
+  }
+  double subtotal(double cartTotal, double delivery,){
+    return cartTotal + delivery + promoDiscount;
   }
 
   @override
   Widget build(BuildContext context) {
-    // delivery = (20 * cartProduct.length.toDouble());
-    subtotal = cartTotal() + delivery(cartProduct.length) + promoDiscount;
-    final textTheme = Theme.of(context).textTheme;
 
+    final textTheme = Theme.of(context).textTheme;
     final user = Provider.of<UserProperties?>(context);
 
     Widget cartLayout({required List<ProductProperties> products}) {
@@ -83,23 +50,17 @@ class _CartState extends State<Cart> {
               itemCount: products.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
+                final item = products[index];
                 return CartItemLayout(
-                    increase: () {
-                      // setState(() {
-                      //   cartProduct[index].increaseNumOfOrder();
-                      // });
+                    increase: item.orderQuantity! >= item.Quantity ? null : () async {
+                      await dataInstance.updateOrderQuantity(item.orderQuantity! + 1, user!.uid, item.productId);
                     },
-                    decrease: () {
-                      // setState(() {
-                      //   cartProduct[index].decreaseNumOfOrder();
-                      // },);
+                    decrease:item.orderQuantity! <= 1 ? null : () async {
+                      await dataInstance.updateOrderQuantity(item.orderQuantity! - 1, user!.uid, item.productId);
                     },
                     product: products[index],
-                    remove: () {
-                      // setState(() {
-                      //   cartProduct.removeAt(index);
-                      // });
-                    });
+                    remove: () {},
+                );
               },
             ),
           ),
@@ -144,13 +105,13 @@ class _CartState extends State<Cart> {
             child: Column(
               children: [
                 //Cart total
-                annotations(heading: 'Cart total', value: cartTotal()),
+                annotations(heading: 'Cart total', value: cartTotal(products)),
                 const SizedBox(
                   height: 20,
                 ),
                 //Delivery
                 annotations(
-                    heading: 'Delivery', value: delivery(cartProduct.length)),
+                    heading: 'Delivery', value: delivery(products.length)),
                 const SizedBox(
                   height: 20,
                 ),
@@ -162,7 +123,7 @@ class _CartState extends State<Cart> {
                   height: 20,
                 ),
                 annotations(
-                    heading: 'Subtotal', value: subtotal, isTotal: true),
+                    heading: 'Subtotal', value: subtotal(cartTotal(products), delivery(products.length)), isTotal: true),
               ],
             ),
           ),
@@ -188,21 +149,21 @@ class _CartState extends State<Cart> {
           title: const Text(
             'Cart',
           ),
-          actions: [
-            Center(
-                child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Text(
-                cartProduct.length.toString(),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ))
-          ],
+          // actions: [
+          //   Center(
+          //       child: Padding(
+          //     padding: const EdgeInsets.only(right: 8.0),
+          //     child: Text(
+          //       p.length.toString(),
+          //       style: TextStyle(
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //     ),
+          //   ))
+          // ],
         ),
         body: StreamBuilder(
-          stream: DataServices().getCartOrWishlistData(user!.uid, true),
+          stream: dataInstance.getCartOrWishlistData(user!.uid, true),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -228,6 +189,7 @@ class _CartState extends State<Cart> {
                     category: data['category'],
                     subCategory: data['subCategory'],
                     Quantity: data['Quantity'],
+                    orderQuantity: data['orderQuantity']
                   ));
                 }
                 return cartLayout(products: cartProducts);
@@ -255,7 +217,7 @@ class _CartState extends State<Cart> {
           ),
         ),
         Text(
-          NumberFormat.currency(symbol: '₵').format(value),
+          currency(value),
           style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
